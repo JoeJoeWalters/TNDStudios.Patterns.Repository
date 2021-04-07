@@ -9,13 +9,20 @@ namespace TNDStudios.Patterns.Repository.Module
     {
         private readonly Dictionary<String, TDocument> _values;
 
-        public MemoryRepository()
+        private readonly Func<TDomain, TDocument> _toDocument;
+        private readonly Func<TDocument, TDomain> _toDomain;
+
+        public MemoryRepository(
+            Func<TDomain, TDocument> toDocument,
+            Func<TDocument, TDomain> toDomain)
         {
+            _toDocument = toDocument;
+            _toDomain = toDomain;
             _values = new Dictionary<String, TDocument>();
         }
 
-        public bool Delete(String id) =>
-                _values.Remove(id);
+        public bool Delete(String id) 
+            => _values.Remove(id);
 
         public TDomain Get(String id)
         {
@@ -32,15 +39,11 @@ namespace TNDStudios.Patterns.Repository.Module
             throw new NotImplementedException();
         }
 
-        public TDomain ToDomain(TDocument document)
-        {
-            throw new NotImplementedException();
-        }
+        public TDomain ToDomain(TDocument document) 
+            => _toDomain(document);
 
-        public TDocument ToDocument(TDomain domain)
-        {
-            throw new NotImplementedException();
-        }
+        public TDocument ToDocument(TDomain domain) 
+            => _toDocument(domain);
 
         public bool Upsert(TDomain item)
         {
