@@ -47,7 +47,15 @@ namespace TNDStudios.Patterns.Repository.Module
 
         public bool Upsert(TDomain item)
         {
-            throw new NotImplementedException();
+            TDocument document = ToDocument(item);
+            if (document != null)
+            {
+                item.Id = document.Id = document.Id ?? Guid.NewGuid().ToString();
+                _values[document.Id] = document;
+                return true;
+            }
+
+            return false;
         }
     }
 }
