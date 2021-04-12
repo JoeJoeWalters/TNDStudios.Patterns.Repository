@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace TNDStudios.Patterns.Repository.Module
 {
@@ -34,9 +36,10 @@ namespace TNDStudios.Patterns.Repository.Module
             return null;
         }
 
-        public IEnumerable<TDomain> Query(string query)
+        public IEnumerable<TDomain> Query(Expression<Func<TDocument, Boolean>> query)
         {
-            throw new NotImplementedException();
+            var filtered = _values.Select(x => x.Value).AsQueryable<TDocument>().Where(query);
+            return filtered.Select(x => ToDomain(x)).ToList();
         }
 
         public TDomain ToDomain(TDocument document) 

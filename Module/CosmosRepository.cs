@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace TNDStudios.Patterns.Repository.Module
 {
@@ -17,7 +19,7 @@ namespace TNDStudios.Patterns.Repository.Module
             throw new NotImplementedException();
         }
 
-        public IEnumerable<TDomain> Query(string query)
+        public IEnumerable<TDomain> Query(Expression<Func<TDocument, Boolean>> query)
         {
             throw new NotImplementedException();
         }

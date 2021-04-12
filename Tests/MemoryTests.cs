@@ -2,6 +2,9 @@ using System;
 using Xunit;
 using TNDStudios.Patterns.Repository.Module;
 using FluentAssertions;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace TNDStudios.Patterns.Repository.Tests
 {
@@ -50,20 +53,25 @@ namespace TNDStudios.Patterns.Repository.Tests
             // ARRANGE
             MemoryDomainObject domain = new MemoryDomainObject() { };
             MemoryDomainObject resultObject = null;
+            Boolean upsertResult = false;
+            String upsertId = String.Empty;
+            Boolean deleteResult = false;
 
             // ACT
-            Boolean upsertResult = _repository.Upsert(domain);
+            upsertResult = _repository.Upsert(domain);
             if (upsertResult)
             {
-                Boolean deleteResult = _repository.Delete(domain.Id);
+                upsertId = domain.Id;
+                deleteResult = _repository.Delete(upsertId);
                 if (deleteResult)
                 {
-                    resultObject = _repository.Get(domain.Id);
+                    resultObject = _repository.Get(upsertId);
                 }
             }
 
             // ASSERT
             upsertResult.Should().BeTrue();
+            upsertId.Should().NotBeEmpty();
             resultObject.Should().BeNull();
         }
 
@@ -86,6 +94,31 @@ namespace TNDStudios.Patterns.Repository.Tests
             resultObject.Should().NotBeNull();
             domain.Id.Should().NotBeNull();
             resultObject.Id.Should().Be(domain.Id);
+        }
+        
+        Expression<Func<MemoryDocumentObject, Boolean>> QueryById(String id)
+            => q => q.Id == id;
+
+        [Fact]
+        public void Query()
+        {
+            // ARRANGE
+            Expression<Func<MemoryDocumentObject, Boolean>> query;
+            MemoryDomainObject domain = new MemoryDomainObject() { };
+            IEnumerable<MemoryDomainObject> results = null;
+
+            // ACT
+            Boolean upsertResult = _repository.Upsert(domain);
+            if (upsertResult)
+            {
+                query = QueryById(domain.Id);
+                results = _repository.Query(query);
+            }
+
+            // ASSERT
+            upsertResult.Should().BeTrue();
+            results.Count().Should().NotBe(0);
+            results.ToList()[0].Id.Should().Be(domain.Id);
         }
     }
 }
