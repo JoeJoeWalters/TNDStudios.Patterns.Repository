@@ -1,42 +1,35 @@
+﻿using FluentAssertions;
 using System;
-using Xunit;
-using TNDStudios.Patterns.Repository.Module;
-using FluentAssertions;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Collections.Generic;
+using TNDStudios.Patterns.Repository.Module;
 
 namespace TNDStudios.Patterns.Repository.Tests
 {
-    public class MemoryDomainObject : RepositoryDomainObject { }
-    public class MemoryDocumentObject : RepositoryDocument { }
+    public class TestDomainObject : RepositoryDomainObject { }
+    public class TestDocumentObject : RepositoryDocument { }
 
-    public class MemoryTests
+    public class RepositoryTestsBase
     {
-        private MemoryRepository<MemoryDomainObject, MemoryDocumentObject> _repository;
+        internal IRepository<TestDomainObject, TestDocumentObject> _repository;
 
-        public MemoryTests()
-        {
-            _repository = new MemoryRepository<MemoryDomainObject, MemoryDocumentObject>(ToDocumentObject, ToDomainObject);
-        }
-
-        private MemoryDomainObject ToDomainObject(MemoryDocumentObject from)
-            => new MemoryDomainObject()
+        internal TestDomainObject ToDomainObject(TestDocumentObject from)
+            => new TestDomainObject()
             {
                 Id = from.Id
             };
 
-        private MemoryDocumentObject ToDocumentObject(MemoryDomainObject from)
-            => new MemoryDocumentObject()
+        internal TestDocumentObject ToDocumentObject(TestDomainObject from)
+            => new TestDocumentObject()
             {
                 Id = from.Id
             };
 
-        [Fact]
         public virtual void Add()
         {
             // ARRANGE
-            MemoryDomainObject domain = new MemoryDomainObject() { };
+            TestDomainObject domain = new TestDomainObject() { };
             Boolean result = false;
 
             // ACT
@@ -47,12 +40,11 @@ namespace TNDStudios.Patterns.Repository.Tests
             domain.Id.Should().NotBeNullOrEmpty();
         }
 
-        [Fact]
-        public void Delete()
+        public virtual void Delete()
         {
             // ARRANGE
-            MemoryDomainObject domain = new MemoryDomainObject() { };
-            MemoryDomainObject resultObject = null;
+            TestDomainObject domain = new TestDomainObject() { };
+            TestDomainObject resultObject = null;
             Boolean upsertResult = false;
             String upsertId = String.Empty;
             Boolean deleteResult = false;
@@ -75,12 +67,11 @@ namespace TNDStudios.Patterns.Repository.Tests
             resultObject.Should().BeNull();
         }
 
-        [Fact]
-        public void Get()
+        public virtual void Get()
         {
             // ARRANGE
-            MemoryDomainObject domain = new MemoryDomainObject() { };
-            MemoryDomainObject resultObject = null;
+            TestDomainObject domain = new TestDomainObject() { };
+            TestDomainObject resultObject = null;
 
             // ACT
             Boolean upsertResult = _repository.Upsert(domain);
@@ -95,17 +86,16 @@ namespace TNDStudios.Patterns.Repository.Tests
             domain.Id.Should().NotBeNull();
             resultObject.Id.Should().Be(domain.Id);
         }
-        
-        Expression<Func<MemoryDocumentObject, Boolean>> QueryById(String id)
+
+        Expression<Func<TestDocumentObject, Boolean>> QueryById(String id)
             => q => q.Id == id;
 
-        [Fact]
-        public void Query()
+        public virtual void Query()
         {
             // ARRANGE
-            Expression<Func<MemoryDocumentObject, Boolean>> query;
-            MemoryDomainObject domain = new MemoryDomainObject() { };
-            IEnumerable<MemoryDomainObject> results = null;
+            Expression<Func<TestDocumentObject, Boolean>> query;
+            TestDomainObject domain = new TestDomainObject() { };
+            IEnumerable<TestDomainObject> results = null;
 
             // ACT
             Boolean upsertResult = _repository.Upsert(domain);

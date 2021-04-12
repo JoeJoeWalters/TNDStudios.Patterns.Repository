@@ -9,6 +9,20 @@ namespace TNDStudios.Patterns.Repository.Module
         where TDocument : RepositoryDocument
         where TDomain : RepositoryDomainObject
     {
+        private readonly Dictionary<String, TDocument> _values;
+
+        private readonly Func<TDomain, TDocument> _toDocument;
+        private readonly Func<TDocument, TDomain> _toDomain;
+
+        public CosmosRepository(
+            Func<TDomain, TDocument> toDocument,
+            Func<TDocument, TDomain> toDomain)
+        {
+            _toDocument = toDocument;
+            _toDomain = toDomain;
+            _values = new Dictionary<String, TDocument>();
+        }
+
         public bool Delete(String id)
         {
             throw new NotImplementedException();
