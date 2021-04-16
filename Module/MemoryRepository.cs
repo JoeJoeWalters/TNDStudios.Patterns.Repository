@@ -60,5 +60,15 @@ namespace TNDStudios.Patterns.Repository.Module
 
             return false;
         }
+
+        public bool WithData(List<TDomain> data)
+        {
+            Int32 insertCount = 0;
+
+            data.ForEach(item =>
+                insertCount += (Upsert(item) ? 1 : 0));
+
+            return insertCount == data.Count;
+        }
     }
 }

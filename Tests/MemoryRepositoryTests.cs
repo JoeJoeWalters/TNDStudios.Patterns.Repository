@@ -21,5 +21,8 @@ namespace TNDStudios.Patterns.Repository.Tests
         
         [Fact]
         public override void Query() => base.Query();
+
+        [Fact]
+        public override void DataLoad() => base.DataLoad();
     }
 }

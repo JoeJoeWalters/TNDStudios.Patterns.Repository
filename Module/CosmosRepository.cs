@@ -52,5 +52,10 @@ namespace TNDStudios.Patterns.Repository.Module
         {
             throw new NotImplementedException();
         }
+
+        public bool WithData(List<TDomain> data)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

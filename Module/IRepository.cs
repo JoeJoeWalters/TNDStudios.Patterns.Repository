@@ -27,5 +27,7 @@ namespace TNDStudios.Patterns.Repository.Module
         IEnumerable<TDomain> Query(Expression<Func<TDocument, Boolean>> query);
         Boolean Delete(String id);
         Boolean Upsert(TDomain item);
+
+        Boolean WithData(List<TDomain> data);
     }
 }

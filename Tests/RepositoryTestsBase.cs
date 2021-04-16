@@ -12,6 +12,13 @@ namespace TNDStudios.Patterns.Repository.Tests
 
     public class RepositoryTestsBase
     {
+        internal List<TestDomainObject> _testData = new List<TestDomainObject>()
+            { 
+                new TestDomainObject(){ Id = Guid.NewGuid().ToString() },
+                new TestDomainObject(){ Id = Guid.NewGuid().ToString() },
+                new TestDomainObject(){ Id = Guid.NewGuid().ToString() }
+            };
+
         internal IRepository<TestDomainObject, TestDocumentObject> _repository;
 
         internal TestDomainObject ToDomainObject(TestDocumentObject from)
@@ -109,6 +116,26 @@ namespace TNDStudios.Patterns.Repository.Tests
             upsertResult.Should().BeTrue();
             results.Count().Should().NotBe(0);
             results.ToList()[0].Id.Should().Be(domain.Id);
+        }
+
+        Expression<Func<TestDocumentObject, Boolean>> QueryAll()
+            => q => true;
+
+        public virtual void DataLoad()
+        {
+            // ARRANGE
+            Boolean success = false;
+            Expression<Func<TestDocumentObject, Boolean>> query;
+            IEnumerable<TestDomainObject> results = null;
+
+            // ACT
+            success = _repository.WithData(_testData);
+            query = QueryAll();
+            results = _repository.Query(query);
+
+            // ASSERT
+            success.Should().BeTrue();
+            results.Count().Should().Be(_testData.Count);
         }
     }
 }
